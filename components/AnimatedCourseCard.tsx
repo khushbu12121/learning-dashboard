@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 type Course = {
   id: string;
@@ -13,6 +14,21 @@ export default function AnimatedCourseCard({
 }: {
   course: Course;
 }) {
+
+  const deleteCourse = async () => {
+    const { error } = await supabase
+      .from("courses")
+      .delete()
+      .eq("id", course.id);
+
+    if (error) {
+      alert(error.message);
+    } else {
+      alert("Course Deleted");
+      location.reload();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -27,9 +43,18 @@ export default function AnimatedCourseCard({
       }}
       className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800"
     >
-      <h2 className="text-xl font-semibold">
-        {course.title}
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">
+          {course.title}
+        </h2>
+
+        <button
+          onClick={deleteCourse}
+          className="bg-red-600 px-3 py-1 rounded text-sm"
+        >
+          Delete
+        </button>
+      </div>
 
       <p className="mt-3 text-sm text-zinc-400">
         Progress
